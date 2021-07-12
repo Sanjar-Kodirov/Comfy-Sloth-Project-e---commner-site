@@ -9,25 +9,40 @@ import CartButtons from './CartButtons'
 import { useUserContext } from '../context/user_context'
 
 const Sidebar = () => {
-  const isOpen = true
+  const { isSidebarOpen, closeSidebar } = useProductsContext()
+  const { myUser } = useUserContext()
+
   return (
     <SidebarContainer>
-      <aside className={`${isOpen ? ' show-sidebar': 'sidebar show-sidebar'}`}>
-      {/* <aside className=" show-sidebar"> */}
-        <div className="sidebar-header">
-          <img src={logo} alt="comfy" />
-          <button className="close-btn" type='button'> <FaTimes /> </button>
+      <aside
+        className={`${isSidebarOpen ? 'sidebar show-sidebar' : 'sidebar'}`}
+      >
+        <div className='sidebar-header'>
+          <img src={logo} className='logo' alt='comfy sloth' />
+          <button className='close-btn' type='button' onClick={closeSidebar}>
+            <FaTimes />
+          </button>
         </div>
-        <ul className="links">
-          {links.map(el => {
+        <ul className='links'>
+          {links.map(({ id, text, url }) => {
             return (
-              <li key={el.id}><Link to={el.url}>{el.text}</Link></li>
+              <li key={id}>
+                <Link to={url} onClick={closeSidebar}>
+                  {text}
+                </Link>
+              </li>
             )
           })}
-          <li> <Link to="/checkout">  Checkout </Link></li>
+          {myUser && (
+            <li>
+              <Link to='/checkout' onClick={closeSidebar}>
+                checkout
+              </Link>
+            </li>
+          )}
         </ul>
         <CartButtons />
-      </aside> 
+      </aside>
     </SidebarContainer>
   )
 }
@@ -83,7 +98,6 @@ const SidebarContainer = styled.div`
     top: 0;
     left: 0;
     width: 100%;
-    text-align: center;
     height: 100%;
     background: var(--clr-white);
     transition: var(--transition);
